@@ -41,171 +41,223 @@
 
 <!-- Users Table -->
 <h2>1. `users` 表格</h2>
-<table>
+<table border="1">
   <thead>
   <tr>
     <th>欄位名稱</th>
+    <th>參數型態</th>
     <th>描述</th>
   </tr>
   </thead>
   <tbody>
   <tr>
-    <td>user_id</td>
-    <td>用戶唯一識別碼 (Primary Key)</td>
+    <td>id</td>
+    <td>INT</td>
+    <td>主鍵，自增</td>
   </tr>
   <tr>
-    <td>name</td>
-    <td>用戶姓名</td>
-  </tr>
-  <tr>
-    <td>phone</td>
-    <td>用戶聯絡電話</td>
-  </tr>
-  <tr>
-    <td>email</td>
-    <td>用戶電子郵件</td>
+    <td>username</td>
+    <td>VARCHAR(255)</td>
+    <td>使用者名稱，唯一</td>
   </tr>
   <tr>
     <td>password</td>
-    <td>用戶密碼</td>
+    <td>VARCHAR(255)</td>
+    <td>使用者密碼</td>
+  </tr>
+  <tr>
+    <td>email</td>
+    <td>VARCHAR(255)</td>
+    <td>使用者電子郵件</td>
   </tr>
   <tr>
     <td>created_at</td>
-    <td>帳戶創建時間</td>
+    <td>TIMESTAMP</td>
+    <td>註冊時間</td>
   </tr>
   <tr>
     <td>updated_at</td>
-    <td>帳戶資料更新時間</td>
+    <td>TIMESTAMP</td>
+    <td>最後更新時間</td>
   </tr>
   </tbody>
 </table>
 
 <!-- Furniture Requests Table -->
 <h2>2. `furniture_requests` 表格</h2>
-<table>
+<table border="1">
   <thead>
   <tr>
     <th>欄位名稱</th>
+    <th>參數型態</th>
     <th>描述</th>
   </tr>
   </thead>
   <tbody>
   <tr>
-    <td>request_id</td>
-    <td>回收申請唯一識別碼 (Primary Key)</td>
+    <td>id</td>
+    <td>INT</td>
+    <td>主鍵，自增</td>
   </tr>
   <tr>
-    <td>user_id</td>
-    <td>用戶 ID (Foreign Key, 來自 `users`)</td>
+    <td>name</td>
+    <td>VARCHAR(255)</td>
+    <td>家具名稱</td>
   </tr>
   <tr>
-    <td>point_id</td>
-    <td>回收點 ID (Foreign Key, 來自 `recycling_points`)</td>
+    <td>type</td>
+    <td>VARCHAR(100)</td>
+    <td>家具類型</td>
   </tr>
   <tr>
-    <td>slot_id</td>
-    <td>服務時段 ID (Foreign Key, 來自 `service_slots`)</td>
+    <td>dimensions</td>
+    <td>VARCHAR(100)</td>
+    <td>家具尺寸 (例如：長×寬×高)</td>
   </tr>
   <tr>
-    <td>item_type</td>
-    <td>家具種類 (如床墊、沙發等)</td>
+    <td>material</td>
+    <td>VARCHAR(100)</td>
+    <td>家具材料</td>
   </tr>
   <tr>
-    <td>quantity</td>
-    <td>家具數量</td>
-  </tr>
-  <tr>
-    <td>size</td>
-    <td>家具尺寸 (長 x 寬 x 高)</td>
-  </tr>
-  <tr>
-    <td>photo_url</td>
-    <td>家具照片的 URL</td>
+    <td>weight</td>
+    <td>DECIMAL(10,2)</td>
+    <td>家具重量 (公斤)</td>
   </tr>
   <tr>
     <td>status</td>
-    <td>申請狀態 (如 NEW, ACCEPTED, CANCELED 等)</td>
+    <td>VARCHAR(50)</td>
+    <td>家具回收狀態</td>
   </tr>
   <tr>
     <td>created_at</td>
-    <td>回收申請創建時間</td>
+    <td>TIMESTAMP</td>
+    <td>建立時間</td>
+  </tr>
+  <tr>
+    <td>updated_at</td>
+    <td>TIMESTAMP</td>
+    <td>最後更新時間</td>
   </tr>
   </tbody>
 </table>
 
 <!-- Recycling Points Table -->
 <h2>3. `recycling_points` 表格</h2>
-<table>
+<table border="1">
   <thead>
   <tr>
     <th>欄位名稱</th>
+    <th>參數型態</th>
     <th>描述</th>
   </tr>
   </thead>
   <tbody>
   <tr>
-    <td>point_id</td>
-    <td>回收點唯一識別碼 (Primary Key)</td>
+    <td>id</td>
+    <td>INT</td>
+    <td>主鍵，自增</td>
   </tr>
   <tr>
     <td>name</td>
+    <td>VARCHAR(255)</td>
     <td>回收點名稱</td>
   </tr>
   <tr>
     <td>address</td>
-    <td>回收點地址</td>
+    <td>VARCHAR(255)</td>
+    <td>地址</td>
   </tr>
   <tr>
-    <td>location</td>
-    <td>回收點地理位置 (可用來做地圖定位)</td>
+    <td>latitude</td>
+    <td>DECIMAL(9,6)</td>
+    <td>經度</td>
+  </tr>
+  <tr>
+    <td>longitude</td>
+    <td>DECIMAL(9,6)</td>
+    <td>緯度</td>
+  </tr>
+  <tr>
+    <td>available</td>
+    <td>BOOLEAN</td>
+    <td>是否可用</td>
   </tr>
   <tr>
     <td>created_at</td>
-    <td>回收點創建時間</td>
+    <td>TIMESTAMP</td>
+    <td>建立時間</td>
+  </tr>
+  <tr>
+    <td>updated_at</td>
+    <td>TIMESTAMP</td>
+    <td>最後更新時間</td>
   </tr>
   </tbody>
 </table>
 
 <!-- Service Slots Table -->
 <h2>4. `service_slots` 表格</h2>
-<table>
+<table border="1">
   <thead>
   <tr>
     <th>欄位名稱</th>
+    <th>參數型態</th>
     <th>描述</th>
   </tr>
   </thead>
   <tbody>
   <tr>
-    <td>slot_id</td>
-    <td>服務時段唯一識別碼 (Primary Key)</td>
+    <td>id</td>
+    <td>INT</td>
+    <td>主鍵，自增</td>
   </tr>
   <tr>
-    <td>point_id</td>
-    <td>回收點 ID (Foreign Key, 來自 `recycling_points`)</td>
+    <td>user_id</td>
+    <td>INT</td>
+    <td>外鍵，指向 `Users` 表</td>
+  </tr>
+  <tr>
+    <td>recycling_point_id</td>
+    <td>INT</td>
+    <td>外鍵，指向 `Recycling Points` 表</td>
   </tr>
   <tr>
     <td>date</td>
-    <td>服務日期</td>
+    <td>DATE</td>
+    <td>回收日期</td>
   </tr>
   <tr>
-    <td>start_time</td>
-    <td>服務開始時間</td>
+    <td>time_slot</td>
+    <td>VARCHAR(50)</td>
+    <td>回收時段</td>
   </tr>
   <tr>
-    <td>end_time</td>
-    <td>服務結束時間</td>
+    <td>furniture_list</td>
+    <td>TEXT</td>
+    <td>家具清單 (JSON 格式)</td>
   </tr>
   <tr>
-    <td>available_slots</td>
-    <td>可用名額數量</td>
+    <td>status</td>
+    <td>VARCHAR(50)</td>
+    <td>申請狀態 (NEW, ACCEPTED, CANCELED)</td>
+  </tr>
+  <tr>
+    <td>created_at</td>
+    <td>TIMESTAMP</td>
+    <td>建立時間</td>
+  </tr>
+  <tr>
+    <td>updated_at</td>
+    <td>TIMESTAMP</td>
+    <td>最後更新時間</td>
   </tr>
   </tbody>
 </table>
 
 <!-- Delivery Schedules Table -->
 <h2>5. `delivery_schedules` 表格</h2>
-<table>
+<table border="1">
   <thead>
   <tr>
     <th>欄位名稱</th>
@@ -238,7 +290,7 @@
 
 <!-- Vehicles Table -->
 <h2>6. `vehicles` 表格</h2>
-<table>
+<table border="1">
   <thead>
   <tr>
     <th>欄位名稱</th>
@@ -275,7 +327,7 @@
 
 <!-- Reports Table -->
 <h2>7. `reports` 表格</h2>
-<table>
+<table border="1">
   <thead>
   <tr>
     <th>欄位名稱</th>
@@ -297,5 +349,6 @@
   </tr>
   </tbody>
 </table>
+
 </body>
 </html>
