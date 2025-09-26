@@ -1,10 +1,301 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
-  <title>$Title$</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>大型家具回收預約平台 - 資料庫設計</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      margin: 20px;
+    }
+    h1, h2 {
+      color: #2C3E50;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      margin-bottom: 20px;
+    }
+    th, td {
+      padding: 12px;
+      border: 1px solid #ccc;
+      text-align: left;
+    }
+    th {
+      background-color: #34495E;
+      color: #fff;
+    }
+    .description {
+      background-color: #f9f9f9;
+      padding: 15px;
+      margin-top: 10px;
+      border: 1px solid #ccc;
+    }
+  </style>
 </head>
 <body>
-$END$
+<h1>大型家具回收預約平台 - 資料庫設計</h1>
+
+<!-- Users Table -->
+<h2>1. `users` 表格</h2>
+<table>
+  <thead>
+  <tr>
+    <th>欄位名稱</th>
+    <th>描述</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>user_id</td>
+    <td>用戶唯一識別碼 (Primary Key)</td>
+  </tr>
+  <tr>
+    <td>name</td>
+    <td>用戶姓名</td>
+  </tr>
+  <tr>
+    <td>phone</td>
+    <td>用戶聯絡電話</td>
+  </tr>
+  <tr>
+    <td>email</td>
+    <td>用戶電子郵件</td>
+  </tr>
+  <tr>
+    <td>password</td>
+    <td>用戶密碼</td>
+  </tr>
+  <tr>
+    <td>created_at</td>
+    <td>帳戶創建時間</td>
+  </tr>
+  <tr>
+    <td>updated_at</td>
+    <td>帳戶資料更新時間</td>
+  </tr>
+  </tbody>
+</table>
+
+<!-- Furniture Requests Table -->
+<h2>2. `furniture_requests` 表格</h2>
+<table>
+  <thead>
+  <tr>
+    <th>欄位名稱</th>
+    <th>描述</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>request_id</td>
+    <td>回收申請唯一識別碼 (Primary Key)</td>
+  </tr>
+  <tr>
+    <td>user_id</td>
+    <td>用戶 ID (Foreign Key, 來自 `users`)</td>
+  </tr>
+  <tr>
+    <td>point_id</td>
+    <td>回收點 ID (Foreign Key, 來自 `recycling_points`)</td>
+  </tr>
+  <tr>
+    <td>slot_id</td>
+    <td>服務時段 ID (Foreign Key, 來自 `service_slots`)</td>
+  </tr>
+  <tr>
+    <td>item_type</td>
+    <td>家具種類 (如床墊、沙發等)</td>
+  </tr>
+  <tr>
+    <td>quantity</td>
+    <td>家具數量</td>
+  </tr>
+  <tr>
+    <td>size</td>
+    <td>家具尺寸 (長 x 寬 x 高)</td>
+  </tr>
+  <tr>
+    <td>photo_url</td>
+    <td>家具照片的 URL</td>
+  </tr>
+  <tr>
+    <td>status</td>
+    <td>申請狀態 (如 NEW, ACCEPTED, CANCELED 等)</td>
+  </tr>
+  <tr>
+    <td>created_at</td>
+    <td>回收申請創建時間</td>
+  </tr>
+  </tbody>
+</table>
+
+<!-- Recycling Points Table -->
+<h2>3. `recycling_points` 表格</h2>
+<table>
+  <thead>
+  <tr>
+    <th>欄位名稱</th>
+    <th>描述</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>point_id</td>
+    <td>回收點唯一識別碼 (Primary Key)</td>
+  </tr>
+  <tr>
+    <td>name</td>
+    <td>回收點名稱</td>
+  </tr>
+  <tr>
+    <td>address</td>
+    <td>回收點地址</td>
+  </tr>
+  <tr>
+    <td>location</td>
+    <td>回收點地理位置 (可用來做地圖定位)</td>
+  </tr>
+  <tr>
+    <td>created_at</td>
+    <td>回收點創建時間</td>
+  </tr>
+  </tbody>
+</table>
+
+<!-- Service Slots Table -->
+<h2>4. `service_slots` 表格</h2>
+<table>
+  <thead>
+  <tr>
+    <th>欄位名稱</th>
+    <th>描述</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>slot_id</td>
+    <td>服務時段唯一識別碼 (Primary Key)</td>
+  </tr>
+  <tr>
+    <td>point_id</td>
+    <td>回收點 ID (Foreign Key, 來自 `recycling_points`)</td>
+  </tr>
+  <tr>
+    <td>date</td>
+    <td>服務日期</td>
+  </tr>
+  <tr>
+    <td>start_time</td>
+    <td>服務開始時間</td>
+  </tr>
+  <tr>
+    <td>end_time</td>
+    <td>服務結束時間</td>
+  </tr>
+  <tr>
+    <td>available_slots</td>
+    <td>可用名額數量</td>
+  </tr>
+  </tbody>
+</table>
+
+<!-- Delivery Schedules Table -->
+<h2>5. `delivery_schedules` 表格</h2>
+<table>
+  <thead>
+  <tr>
+    <th>欄位名稱</th>
+    <th>描述</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>schedule_id</td>
+    <td>排程唯一識別碼 (Primary Key)</td>
+  </tr>
+  <tr>
+    <td>request_id</td>
+    <td>回收申請 ID (Foreign Key, 來自 `furniture_requests`)</td>
+  </tr>
+  <tr>
+    <td>vehicle_id</td>
+    <td>車輛 ID (Foreign Key, 來自 `vehicles`)</td>
+  </tr>
+  <tr>
+    <td>eta</td>
+    <td>預計到達時間（ETA）</td>
+  </tr>
+  <tr>
+    <td>status</td>
+    <td>排程狀態 (如 PENDING, IN_PROGRESS, COMPLETED 等)</td>
+  </tr>
+  </tbody>
+</table>
+
+<!-- Vehicles Table -->
+<h2>6. `vehicles` 表格</h2>
+<table>
+  <thead>
+  <tr>
+    <th>欄位名稱</th>
+    <th>描述</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>vehicle_id</td>
+    <td>車輛唯一識別碼 (Primary Key)</td>
+  </tr>
+  <tr>
+    <td>plate_number</td>
+    <td>車輛車牌號碼</td>
+  </tr>
+  <tr>
+    <td>capacity_length</td>
+    <td>車輛容量長度</td>
+  </tr>
+  <tr>
+    <td>capacity_width</td>
+    <td>車輛容量寬度</td>
+  </tr>
+  <tr>
+    <td>capacity_height</td>
+    <td>車輛容量高度</td>
+  </tr>
+  <tr>
+    <td>status</td>
+    <td>車輛狀態 (如 AVAILABLE, IN_USE, MAINTENANCE 等)</td>
+  </tr>
+  </tbody>
+</table>
+
+<!-- Reports Table -->
+<h2>7. `reports` 表格</h2>
+<table>
+  <thead>
+  <tr>
+    <th>欄位名稱</th>
+    <th>描述</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>report_id</td>
+    <td>報表唯一識別碼 (Primary Key)</td>
+  </tr>
+  <tr>
+    <td>report_data</td>
+    <td>報表內容（通常為 JSON 格式）</td>
+  </tr>
+  <tr>
+    <td>created_at</td>
+    <td>報表創建時間</td>
+  </tr>
+  </tbody>
+</table>
 </body>
 </html>
