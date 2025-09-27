@@ -390,84 +390,119 @@
 <div id="mermaid-view">
   <div class="mermaid" id="mermaid-graph">
     erDiagram
+    %% 核心使用者與權限
     USERS {
     INT id PK
     VARCHAR username
     VARCHAR password
     VARCHAR email
-    BOOLEAN is_manager
+    BOOLEAN is_manager "管理員/一般用戶"
     TIMESTAMP created_at
     TIMESTAMP updated_at
     }
 
-    FURNITURE_REQUESTS {
+    %% 駕駛資訊 (因排程流程提到駕駛)
+    DRIVERS {
     INT id PK
     VARCHAR name
-    VARCHAR type
-    VARCHAR dimensions
-    VARCHAR material
-    DECIMAL weight
-    VARCHAR status
-    TIMESTAMP created_at
-    TIMESTAMP updated_at
+    VARCHAR phone
+    VARCHAR license_number
+    VARCHAR status "在職/休假"
     }
 
+    %% 回收點地點資訊 (Recycling Points)
     RECYCLING_POINTS {
     INT id PK
-    VARCHAR name
-    VARCHAR address
+    VARCHAR name "站點名稱"
+    VARCHAR address "地址"
     DECIMAL latitude
     DECIMAL longitude
-    BOOLEAN available
+    BOOLEAN is_active "是否啟用 (對應用戶流程的'可用')"
     TIMESTAMP created_at
-    TIMESTAMP updated_at
     }
 
+    %% 回收點時段名額設定 (Capacity for specific slots) - 解決名額需求
+    CAPACITY_SLOTS {
+    INT id PK
+    INT recycling_point_id FK
+    DATE date "特定日期"
+    VARCHAR time_slot "特定時段 (ex. '9:00-11:00')"
+    INT capacity_limit "時段名額上限"
+    INT booked_count "已預約數量"
+    }
+
+    %% 預約主單 (Service Slots) - 用戶預約的單一時間/地點
     SERVICE_SLOTS {
     INT id PK
     INT user_id FK
-    INT recycling_point_id FK
-    DATE date
-    VARCHAR time_slot
-    TEXT furniture_list
-    VARCHAR status
+    INT capacity_slot_id FK "關聯到名額設定"
+    VARCHAR status "申請狀態 (Pending/Approved/Rejected)"
     TIMESTAMP created_at
     TIMESTAMP updated_at
+    VARCHAR admin_notes "管理員審核備註"
     }
 
-    DELIVERY_SCHEDULES {
-    INT schedule_id PK
-    INT request_id FK
-    INT vehicle_id FK
-    DATETIME eta
-    VARCHAR status
+    %% 傢俱資料 (Furniture Requests) - 預約單底下的多件傢俱資訊 (已正規化)
+    FURNITURE_REQUESTS {
+    INT id PK
+    INT service_slot_id FK "隸屬於哪個預約單"
+    VARCHAR name "傢俱名稱"
+    VARCHAR type "類別"
+    VARCHAR dimensions "尺寸"
+    VARCHAR material "材質"
+    DECIMAL weight "估計重量"
+    VARCHAR photo_url "照片連結 (Optional)"
+    VARCHAR rejection_reason "退件原因 (對應後台流程)"
     }
 
+    %% 車輛資訊 (Vehicles) - 納入管理流程所需的日期資訊
     VEHICLES {
-    INT vehicle_id PK
-    VARCHAR plate_number
-    DECIMAL capacity_length
-    DECIMAL capacity_width
-    DECIMAL capacity_height
-    VARCHAR status
+    INT id PK
+    VARCHAR plate_number "車牌"
+    DECIMAL capacity_length "載重_長"
+    DECIMAL capacity_width "載重_寬"
+    DECIMAL capacity_height "載重_高"
+    VARCHAR status "狀態 (Active/Disabled)"
+    DATE manufacture_date "出廠日"
+    DATE inspection_date "定檢日"
+    DATE maintenance_date "保養日"
     }
 
+    %% 派車排程 (Delivery Schedules) - 路徑規劃的核心
+    DELIVERY_SCHEDULES {
+    INT id PK
+    INT service_slot_id FK "本次排程服務的預約單"
+    INT vehicle_id FK
+    INT driver_id FK "本次任務指派的駕駛"
+    DATETIME scheduled_pickup_time "預計取件時間 (ETA)"
+    DATETIME actual_pickup_time "實際取件時間"
+    VARCHAR status "排程狀態 (Assigned/On_Route/Completed)"
+    }
+
+    %% 報表資料 (Reports) - 存儲報表生成的結果或摘要
     REPORTS {
-    INT report_id PK
-    JSON report_data
+    INT id PK
+    DATETIME start_date
+    DATETIME end_date
+    VARCHAR report_type "報表類型 (e.g. 案件數統計/完成率分析)"
+    JSON summary_data "統計摘要資料 (而非所有原始資料)"
+    BLOB csv_file "導出的CSV檔案"
     TIMESTAMP created_at
-    INT request_id FK
-    INT service_slot_id FK
-    INT delivery_schedule_id FK
     }
 
-    USERS ||--o{ SERVICE_SLOTS : has
-    RECYCLING_POINTS ||--o{ SERVICE_SLOTS : provides
-    FURNITURE_REQUESTS ||--o{ DELIVERY_SCHEDULES : requested_by
-    VEHICLES ||--o{ DELIVERY_SCHEDULES : delivers
-    FURNITURE_REQUESTS ||--o{ REPORTS : generates
-    SERVICE_SLOTS ||--o{ REPORTS : generates
-    DELIVERY_SCHEDULES ||--o{ REPORTS : generates
+    %% 關聯關係
+    USERS ||--o{ SERVICE_SLOTS : has_made
+    RECYCLING_POINTS ||--o{ CAPACITY_SLOTS : defines_capacity
+    CAPACITY_SLOTS ||--o{ SERVICE_SLOTS : is_booked_against
+
+    SERVICE_SLOTS ||--o{ FURNITURE_REQUESTS : includes
+    SERVICE_SLOTS ||--o{ DELIVERY_SCHEDULES : is_scheduled_for
+
+    VEHICLES ||--o{ DELIVERY_SCHEDULES : is_used_in
+    DRIVERS ||--o{ DELIVERY_SCHEDULES : drives_in
+
+    SERVICE_SLOTS ||--o{ REPORTS : summarizes_slot_data
+    DELIVERY_SCHEDULES ||--o{ REPORTS : summarizes_delivery_data
 
   </div>
 </div>
