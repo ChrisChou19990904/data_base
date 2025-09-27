@@ -34,11 +34,42 @@
       margin-top: 10px;
       border: 1px solid #ccc;
     }
+    .toggle-buttons {
+      margin-bottom: 20px;
+    }
+    button {
+      padding: 8px 16px;
+      margin-right: 10px;
+      font-size: 14px;
+    }
+    #table-view, #mermaid-view {
+      display: none;
+    }
+    #table-view.active, #mermaid-view.active {
+      display: block;
+    }
+    pre {
+      background: #f9f9f9;
+      padding: 20px;
+      border: 1px solid #ddd;
+      overflow-x: auto;
+    }
   </style>
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({ startOnLoad: false });
+    window.renderMermaid = () => {
+      mermaid.run({ nodes: [document.querySelector("#mermaid-graph")] });
+    };
+  </script>
 </head>
 <body>
 <h1>大型家具回收預約平台 - 資料庫設計</h1>
-
+<div class="toggle-buttons">
+  <button onclick="showView('table')">📋 資料表檢視</button>
+  <button onclick="showView('mermaid')">📊 ERD 流程圖</button>
+</div>
+<div id="table-view" class="active">
 <!-- Users Table -->
 <h2>1. `users` 表格</h2>
 <table border="1">
@@ -354,6 +385,76 @@
   </tr>
   </tbody>
 </table>
+</div>
+<!-- Mermaid ERD -->
+<div id="mermaid-view">
+  <div class="mermaid" id="mermaid-graph">
+    erDiagram
+    USERS {
+    INT id PK
+    VARCHAR username
+    VARCHAR email
+    BOOLEAN is_manager
+    }
 
+    FURNITURE_REQUESTS {
+    INT id PK
+    VARCHAR name
+    VARCHAR type
+    VARCHAR dimensions
+    VARCHAR material
+    }
+
+    RECYCLING_POINTS {
+    INT id PK
+    VARCHAR name
+    VARCHAR address
+    }
+
+    SERVICE_SLOTS {
+    INT id PK
+    INT user_id FK
+    INT recycling_point_id FK
+    DATE date
+    VARCHAR time_slot
+    }
+
+    DELIVERY_SCHEDULES {
+    INT schedule_id PK
+    INT request_id FK
+    INT vehicle_id FK
+    DATETIME eta
+    }
+
+    VEHICLES {
+    INT vehicle_id PK
+    VARCHAR plate_number
+    }
+
+    REPORTS {
+    INT report_id PK
+    JSON report_data
+    }
+
+    USERS ||--o{ SERVICE_SLOTS : has
+    RECYCLING_POINTS ||--o{ SERVICE_SLOTS : provides
+    FURNITURE_REQUESTS ||--o{ DELIVERY_SCHEDULES : requested_by
+    VEHICLES ||--o{ DELIVERY_SCHEDULES : delivers
+  </div>
+</div>
+
+<script>
+  function showView(view) {
+    document.getElementById('table-view').classList.remove('active');
+    document.getElementById('mermaid-view').classList.remove('active');
+
+    if (view === 'table') {
+      document.getElementById('table-view').classList.add('active');
+    } else {
+      document.getElementById('mermaid-view').classList.add('active');
+      window.renderMermaid();
+    }
+  }
+</script>
 </body>
 </html>
