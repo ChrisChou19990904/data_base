@@ -393,8 +393,11 @@
     USERS {
     INT id PK
     VARCHAR username
+    VARCHAR password
     VARCHAR email
     BOOLEAN is_manager
+    TIMESTAMP created_at
+    TIMESTAMP updated_at
     }
 
     FURNITURE_REQUESTS {
@@ -403,12 +406,21 @@
     VARCHAR type
     VARCHAR dimensions
     VARCHAR material
+    DECIMAL weight
+    VARCHAR status
+    TIMESTAMP created_at
+    TIMESTAMP updated_at
     }
 
     RECYCLING_POINTS {
     INT id PK
     VARCHAR name
     VARCHAR address
+    DECIMAL latitude
+    DECIMAL longitude
+    BOOLEAN available
+    TIMESTAMP created_at
+    TIMESTAMP updated_at
     }
 
     SERVICE_SLOTS {
@@ -417,6 +429,10 @@
     INT recycling_point_id FK
     DATE date
     VARCHAR time_slot
+    TEXT furniture_list
+    VARCHAR status
+    TIMESTAMP created_at
+    TIMESTAMP updated_at
     }
 
     DELIVERY_SCHEDULES {
@@ -424,22 +440,29 @@
     INT request_id FK
     INT vehicle_id FK
     DATETIME eta
+    VARCHAR status
     }
 
     VEHICLES {
     INT vehicle_id PK
     VARCHAR plate_number
+    DECIMAL capacity_length
+    DECIMAL capacity_width
+    DECIMAL capacity_height
+    VARCHAR status
     }
 
     REPORTS {
     INT report_id PK
     JSON report_data
+    TIMESTAMP created_at
     }
 
     USERS ||--o{ SERVICE_SLOTS : has
     RECYCLING_POINTS ||--o{ SERVICE_SLOTS : provides
     FURNITURE_REQUESTS ||--o{ DELIVERY_SCHEDULES : requested_by
     VEHICLES ||--o{ DELIVERY_SCHEDULES : delivers
+
   </div>
 </div>
 
