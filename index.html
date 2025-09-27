@@ -456,12 +456,18 @@
     INT report_id PK
     JSON report_data
     TIMESTAMP created_at
+    INT request_id FK
+    INT service_slot_id FK
+    INT delivery_schedule_id FK
     }
 
     USERS ||--o{ SERVICE_SLOTS : has
     RECYCLING_POINTS ||--o{ SERVICE_SLOTS : provides
     FURNITURE_REQUESTS ||--o{ DELIVERY_SCHEDULES : requested_by
     VEHICLES ||--o{ DELIVERY_SCHEDULES : delivers
+    FURNITURE_REQUESTS ||--o{ REPORTS : generates
+    SERVICE_SLOTS ||--o{ REPORTS : generates
+    DELIVERY_SCHEDULES ||--o{ REPORTS : generates
 
   </div>
 </div>
