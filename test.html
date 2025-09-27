@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({ startOnLoad: true });
+</script>
+<div id="mermaid-view">
+    <div class="mermaid">
+        erDiagram
+        %% 定義使用者表
+        USERS {
+        INT id PK
+        VARCHAR username
+        VARCHAR password
+        VARCHAR email
+        BOOLEAN is_manager "管理員/一般用戶"
+        TIMESTAMP created_at
+        TIMESTAMP updated_at
+        }
+
+        %% 定義駕駛表
+        DRIVERS {
+        INT id PK
+        VARCHAR name
+        VARCHAR phone
+        VARCHAR license_number
+        VARCHAR status "在職/休假"
+        }
+
+        %% 定義回收點表
+        RECYCLING_POINTS {
+        INT id PK
+        VARCHAR name "站點名稱"
+        VARCHAR address "地址"
+        DECIMAL latitude
+        DECIMAL longitude
+        BOOLEAN is_active "是否啟用 (對應用戶流程的'可用')"
+        TIMESTAMP created_at
+        }
+
+        %% 定義回收點時段名額表
+        CAPACITY_SLOTS {
+        INT id PK
+        INT recycling_point_id FK
+        DATE date "特定日期"
+        VARCHAR time_slot "特定時段 (ex. '9:00-11:00')"
+        INT capacity_limit "時段名額上限"
+        INT booked_count "已預約數量"
+        }
+
+        %% 定義預約單表
+        SERVICE_SLOTS {
+        INT id PK
+        INT user_id FK
+        INT capacity_slot_id FK "關聯到名額設定"
+        VARCHAR status "申請狀態 (Pending/Approved/Rejected)"
+        TIMESTAMP created_at
+        TIMESTAMP updated_at
+        VARCHAR admin_notes "管理員審核備註"
+        }
+
+        %% 定義傢俱請求表
+        FURNITURE_REQUESTS {
+        INT id PK
+        INT service_slot_id FK "隸屬於哪個預約單"
+        VARCHAR name "傢俱名稱"
+        VARCHAR type "類別"
+        VARCHAR dimensions "尺寸"
+        VARCHAR material "材質"
+        DECIMAL weight "估計重量"
+        VARCHAR photo_url "照片連結 (Optional)"
+        VARCHAR rejection_reason "退件原因 (對應後台流程)"
+        }
+
+        %% 定義車輛表
+        VEHICLES {
+        INT id PK
+        VARCHAR plate_number "車牌"
+        DECIMAL capacity_length "載重_長"
+        DECIMAL capacity_width "載重_寬"
+        DECIMAL capacity_height "載重_高"
+        VARCHAR status "狀態 (Active/Disabled)"
+        DATE manufacture_date "出廠日"
+        DATE inspection_date "定檢日"
+        DATE maintenance_date "保養日"
+        }
+
+        %% 定義派車排程表
+        DELIVERY_SCHEDULES {
+        INT id PK
+        INT service_slot_id FK "本次排程服務的預約單"
+        INT vehicle_id FK
+        INT driver_id FK "本次任務指派的駕駛"
+        DATETIME scheduled_pickup_time "預計取件時間 (ETA)"
+        DATETIME actual_pickup_time "實際取件時間"
+        VARCHAR status "排程狀態 (Assigned/On_Route/Completed)"
+        }
+
+        %% 定義報表表
+        REPORTS {
+        INT id PK
+        DATETIME start_date
+        DATETIME end_date
+        VARCHAR report_type "報表類型 (e.g. 案件數統計/完成率分析)"
+        JSON summary_data "統計摘要資料 (而非所有原始資料)"
+        BLOB csv_file "導出的CSV檔案"
+        TIMESTAMP created_at
+        }
+
+        %% 主鍵和外鍵的連接 (用線顯示)
+        USERS ||--o{ SERVICE_SLOTS : "id → user_id"
+        RECYCLING_POINTS ||--o{ CAPACITY_SLOTS : "id → recycling_point_id"
+        CAPACITY_SLOTS ||--o{ SERVICE_SLOTS : "id → capacity_slot_id"
+        SERVICE_SLOTS ||--o{ FURNITURE_REQUESTS : "id → service_slot_id"
+        SERVICE_SLOTS ||--o{ DELIVERY_SCHEDULES : "id → service_slot_id"
+        DELIVERY_SCHEDULES ||--o{ VEHICLES : "id → vehicle_id"
+        DELIVERY_SCHEDULES ||--o{ DRIVERS : "id → driver_id"
+        SERVICE_SLOTS ||--o{ REPORTS : "summarizes_slot_data"
+        DELIVERY_SCHEDULES ||--o{ REPORTS : "summarizes_delivery_data"
+    </div>
+</div>
+</body>
+</html>
