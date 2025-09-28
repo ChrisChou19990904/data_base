@@ -54,6 +54,16 @@
       border: 1px solid #ddd;
       overflow-x: auto;
     }
+    a{
+        color: #2980B9;
+        font-weight: bold;
+    }
+    a:hover{
+        text-decoration: underline;
+    }
+    a:visited{
+        color: #2980B9;
+    }
   </style>
   <script type="module">
     import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
@@ -68,7 +78,8 @@
 <div class="toggle-buttons">
   <button onclick="showView('table')">📋 資料表檢視</button>
   <button onclick="showView('mermaid')">📊 ERD 流程圖</button>
-  <a href="test.html" target="_blank"><button>新的ERD流程圖</button></a>
+  <a href="easy_er.html" target="_blank">簡易的流程圖</a>
+  <a href="complicated_er.html" target="_blank">新的ERD流程圖</a>
 </div>
 <div id="table-view" class="active">
 <!-- Users Table -->

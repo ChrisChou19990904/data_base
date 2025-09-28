@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>ER Diagram - 簡化核心版 (開發基礎)</title>
+    <style>
+        /* 讓圖表更美觀和居中 */
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .mermaid { border: 1px solid #ddd; padding: 20px; border-radius: 8px; background-color: #f9f9f9; }
+    </style>
+</head>
+<body>
+<h1>大型傢俱回收預約平台 - 簡化核心版 ER 圖</h1>
+<p>此版本根據最小可行產品 (MVP) 原則，精簡至 5 個核心表格，為第一階段開發基礎。</p>
+
+<div class="mermaid" id="mermaid-graph-simplified">
+    erDiagram
+    %% 簡化核心版 ER Diagram 程式碼
+
+    %% 核心使用者
+    USERS {
+    INT id PK
+    VARCHAR username
+    VARCHAR email
+    BOOLEAN is_manager "管理員標記"
+    TIMESTAMP created_at
+    }
+
+    %% 回收點 (簡易名額/可用性)
+    RECYCLING_POINTS {
+    INT id PK
+    VARCHAR name "站點名稱"
+    VARCHAR address "地址"
+    DECIMAL latitude
+    DECIMAL longitude
+    BOOLEAN is_active "是否啟用"
+    INT max_daily_capacity "每日名額上限 (簡易名額管理)"
+    }
+
+    %% 派車輛 (併入駕駛姓名，刪除管理日期)
+    VEHICLES {
+    INT id PK
+    VARCHAR plate_number "車牌"
+    DECIMAL capacity_cubic_m "載重體積"
+    VARCHAR driver_name "駕駛姓名 (簡化版併入)"
+    VARCHAR status "狀態 (Active/Disabled)"
+    }
+
+    %% 預約單 (Service Slot) - 核心表格，併入排車資訊
+    SERVICE_SLOTS {
+    INT id PK
+    INT user_id FK
+    INT recycling_point_id FK
+    INT vehicle_id FK "排程車輛FK (併入DELIVERY_SCHEDULES的功能)"
+    DATE date "預約日期"
+    VARCHAR time_slot "預約時段"
+    DATETIME scheduled_eta "預計到達時間 (ETA)"
+    DATETIME actual_finish_time "實際完成時間"
+    VARCHAR status "申請/排程/完成狀態"
+    VARCHAR rejection_reason "退件/取消原因"
+    TIMESTAMP created_at
+    }
+
+    %% 傢俱資料 (隸屬於單一預約單)
+    FURNITURE_REQUESTS {
+    INT id PK
+    INT service_slot_id FK "隸屬於哪個預約單"
+    VARCHAR name "傢俱名稱"
+    VARCHAR type "類別"
+    VARCHAR dimensions "尺寸/規格"
+    DECIMAL weight "估計重量"
+    }
+
+    %% 關聯關係
+    USERS ||--o{ SERVICE_SLOTS : reserves
+    RECYCLING_POINTS ||--o{ SERVICE_SLOTS : is_at
+    VEHICLES ||--o{ SERVICE_SLOTS : is_assigned_to
+    SERVICE_SLOTS ||--o{ FURNITURE_REQUESTS : includes
+</div>
+
+<script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({ startOnLoad: true }); // 直接載入時渲染
+</script>
+</body>
+</html>
